@@ -6,7 +6,7 @@ Asesores: Carlos Pineda (IFUNAM) y Juan Diego Chang (ECFM-USAC)
 
 Descripción:
 Paquete con funciones implementadas para el método numérico que calcula la 
-forma matricial, la matriz Choi y evalúa la positividad de las operaciones PCE.
+forma matricial, la matriz de Choi y evalúa la positividad de las operaciones PCE.
 Además se agregó una función para mostrar una figura con la esfera de Bloch
 transformada por la operación PCE.
 
