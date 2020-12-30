@@ -14,6 +14,8 @@ PCE::usage=
 "PCE[diagElements_List] calculates the matrix representation of a PCE operation in computational basis given its diagonal elements in Pauli basis."
 PTest::usage=
 "PTest[A_List] evaluates the positive-semidefiniteness of A with its eigenvalues."
+BlochSph::usage=
+"TransfBlochSph[diagEl_List] returns the Bloch Sphere transformed."
 
 Begin["`Private`"]
 Reshuffle[SqMatrix_List]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[
@@ -36,6 +38,18 @@ DiagonalMatrix[diagElements].
 Inverse[PauliToComp[Log[4,Length[diagElements]]]]
 
 PTest[A_List]:=(A//Eigenvalues//Min)>=0
+
+BlochSph[diagEl_List]:=
+Graphics3D[{Scale[{
+Sphere[]},If[#==0,0.07,1]&/@diagEl[[2;;4]],{0,0,0}]},
+AxesOrigin->{0,0,0},
+AxesStyle->Thick,
+Ticks->None,
+Boxed->False,
+Axes->True,AxesLabel->{"x","y","z"},
+LabelStyle->Directive[Bold,Large,Black],
+PlotRange->{{-1,1},{-1,1},{-1,1}},
+AxesStyle->Large]
 
 End[];
 EndPackage[]
