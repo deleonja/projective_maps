@@ -1,6 +1,7 @@
 # Mapeos proyectivos en sistemas de varios qubits
 
-Estudiante: José Alfredo de León
+Estudiante: José Alfredo de León (ECFM-UASC)
+
 Asesores: Carlos Pineda (IFUNAM) y Juan Diego Chang (ECFM-USAC)
 
 Descripción:
