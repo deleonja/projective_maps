@@ -5,6 +5,12 @@ Física Aplicada, ECFM-USAC.
 
 __Asesorado por__ Dr. Carlos Pineda (IFUNAM) y M.Sc. Juan Diego Chang (ECFM-USAC).
 
+## **Instrucciones para ejecutar los .nb:**
+1. Clone este repositorio en su computadora. 
+2. Según esté interesado en el proyecto de prácticas o tesis abra 
+   el archivo .nb correspondiente en Wolfram Mathematica y evalúe 
+   el cuaderno completo. 
+
 ## Proyecto de prácticas finales 
 
 __*Descripción*__:
@@ -36,9 +42,3 @@ __*Archivos*__:
   rutinas de pce.m y otras para calcular canales PCE. Adicionalmente, 
   mostramos la manera en la que reproducimos nuestros resultados 
   sobre los canales PCE de 2 y 3 qubits. 
-  
-## **Instrucciones para ejecutar los .nb:**
-1. Clone este repositorio en su computadora. 
-2. Según esté interesado en el proyecto de prácticas o tesis abra 
-   el archivo .nb correspondiente en Wolfram Mathematica y evalúe 
-   el cuaderno completo. 
