@@ -10,6 +10,11 @@ BeginPackage["pce`"]
 
 Pauli::usage=
 "Pauli[Indices_List] gives the tensor product of Pauli matrices (\!\(\*SubscriptBox[\(\[Sigma]\), \(0\)]\)=\[DoubleStruckOne]) with indices in Indices_List."
+PCEsTauConfigurations::usage=
+"PCEsTauConfigurations[\!\(\*
+StyleBox[\"n\",\nFontSlant->\"Italic\"]\)] gives all configurations of 1's and 0's of the elements \!\(\*FormBox[SubscriptBox[\(\[Tau]\), \(\*SubscriptBox[\(j\), \(1\)], \[Ellipsis], \*SubscriptBox[\(j\), \(n\)]\)],
+TraditionalForm]\) of all PCE operations of \!\(\*FormBox[\(n\),
+TraditionalForm]\) qubits. "
 Reshuffle::usage=
 "Reshuffle[m] applies the reshuffle transformation to the matrix m with dimension \!\(\*SuperscriptBox[\(d\), \(2\)]\)\[Times]\!\(\*SuperscriptBox[\(d\), \(2\)]\)."
 PCESuperoperator::usage=
@@ -44,6 +49,11 @@ Pauli[1]=Pauli[{1}]={{0,1},{1,0}};
 Pauli[2]=Pauli[{2}]={{0,-I},{I,0}};
 Pauli[3]=Pauli[{3}]={{1,0},{0,-1}};
 Pauli[Indices_List]:=KroneckerProduct@@(Pauli/@Indices);
+
+(*PCEsTauConfigurations*)
+PCEsTauConfigurations[n_]:=MemoryConstrained[Normal[SparseArray[{1}~Join~#->ConstantArray[1,Length[{1}~Join~#]],{4^n}]]&/@Subsets[Range[2,4^n],4^n],2000000000,"Maximum usage of memory allowed exceeded"]
+
+PCEsTauConfigurations[n_,k_]:=Normal[SparseArray[{1}~Join~#->ConstantArray[1,Length[{1}~Join~#]],{4^n}]]&/@Subsets[Range[2,4^n],{k-1}]
 
 (*Reshuffle*)
 Reshuffle[m_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[m][[1]]],Sqrt[Dimensions[m][[1]]]}]&/@m,Sqrt[Dimensions[m][[1]]]],Sqrt[Dimensions[m][[1]]]],1];
