@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Section:: *)
-(*Component erasing maps package*)
+(*Pauli component erasing*)
 
 
 (* ::Input::Initialization:: *)
@@ -15,32 +15,22 @@ PCEsTauConfigurations::usage=
 StyleBox[\"n\",\nFontSlant->\"Italic\"]\)] gives all configurations of 1's and 0's of the elements \!\(\*FormBox[SubscriptBox[\(\[Tau]\), \(\*SubscriptBox[\(j\), \(1\)], \[Ellipsis], \*SubscriptBox[\(j\), \(n\)]\)],
 TraditionalForm]\) of all PCE operations of \!\(\*FormBox[\(n\),
 TraditionalForm]\) qubits. "
-Reshuffle::usage=
-"Reshuffle[m] applies the reshuffle transformation to the matrix m with dimension \!\(\*SuperscriptBox[\(d\), \(2\)]\)\[Times]\!\(\*SuperscriptBox[\(d\), \(2\)]\)."
 PCESuperoperator::usage=
 "PCESuperoperator[\[Tau]] gives the superoperator, in computational basis, of the PCE operation characterized by the elements \!\(\*FormBox[SubscriptBox[\(\[Tau]\), \(\*SubscriptBox[\(j\), \(1\)], \[Ellipsis], \*SubscriptBox[\(j\), \(n\)]\)],
 TraditionalForm]\) in the 1-D array \[Tau]."
+Reshuffle::usage=
+"Reshuffle[m] applies the reshuffle transformation to the matrix m with dimension \!\(\*SuperscriptBox[\(d\), \(2\)]\)\[Times]\!\(\*SuperscriptBox[\(d\), \(2\)]\)."
 PositivityTest::usage=
 "PositivityTest[\!\(\*
 StyleBox[\"m\",\nFontSlant->\"Italic\"]\)] evaluates if the matrix \!\(\*
 StyleBox[\"m\",\nFontSlant->\"Italic\"]\) is positive semidefinite."
-Dirac::usage=
-"Dirac[vector] returns vector in Dirac notation in computational basis."
-Erase::usage=
-"Erase[EigInfo,PCEfrom,invariantComponents] erases in all valid forms."
-BlochSphTransformation::usage="Returns Bloch Ball transformation of a 1-qubit quantum chanenl given a
-list with center point and the factor of x,y and z. 
-Example: BlochSphTransformation[{{0,0,0.3},{1,1/2,1/2}}] returns 
-a taco-like figure with center at (0,0,0.3).
-BlochSphTransformation[coord_List]
-"
-PCEgenerators::usage=
-"PCEgenerators[n] returns the diagonal superoperators of the generators
-of PCE quantum channels of n qubits."
-TensorPower::usage=
-"TensorPower[A,n] gives the n-times Kronecker product of A."
 PCEFigures::usage=
 "PCEFigures[\[Tau]] generates a geometrical plot to visualize the configuration of the \!\(\*SubscriptBox[\(\[Tau]\), \(\*SubscriptBox[\(j\), \(1\)], \[Ellipsis], \*SubscriptBox[\(j\), \(n\)]\)]\) in the 1-D array \[Tau] of a PCE operation of 1, 2 or 3 qubits. "
+TausOfPCEQuantumChannels::usage=
+"TausOfPCEQuantumChannels[] returns all arrays of 1's and 0's of a PCE
+	quantum channel."
+NumberOfPCEOperations::usage=
+"NumberOfPCEOperations[] returns the number of PCE operations."
 
 Begin["`Private`"]
 (*Pauli*)
@@ -55,9 +45,6 @@ PCEsTauConfigurations[n_]:=MemoryConstrained[Normal[SparseArray[{1}~Join~#->Cons
 
 PCEsTauConfigurations[n_,k_]:=Normal[SparseArray[{1}~Join~#->ConstantArray[1,Length[{1}~Join~#]],{4^n}]]&/@Subsets[Range[2,4^n],{k-1}]
 
-(*Reshuffle*)
-Reshuffle[m_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[m][[1]]],Sqrt[Dimensions[m][[1]]]}]&/@m,Sqrt[Dimensions[m][[1]]]],Sqrt[Dimensions[m][[1]]]],1];
-
 (*PCESuperoperator*)
 PCESuperoperator[pauliDiagonal_List]:=Module[{indices,n,pauliToComp},
 n=Log[4,Length[pauliDiagonal]];
@@ -65,6 +52,12 @@ indices=Tuples[Range[0,3],n];
 pauliToComp=Transpose[Map[Flatten[Pauli[#]]&,indices]];
 pauliToComp.DiagonalMatrix[pauliDiagonal].Inverse[pauliToComp]
 ]
+
+(*Reshuffle*)
+Reshuffle[m_]:=ArrayFlatten[ArrayFlatten/@Partition[Partition[ArrayReshape[#,{Sqrt[Dimensions[m][[1]]],Sqrt[Dimensions[m][[1]]]}]&/@m,Sqrt[Dimensions[m][[1]]]],Sqrt[Dimensions[m][[1]]]],1];
+
+(*PositivityTest*)
+PositivityTest[A_]:=Min[Eigenvalues[A]]>=0
 
 (*PCEFigures*)
 PCEFigures[\[Tau]_]:=Which[Length[\[Tau]]==4,ArrayPlot[{#}&/@\[Tau],ImageSize->50],Length[\[Tau]]==16,ArrayPlot[ArrayReshape[\[Tau],{4,4}],ImageSize->80],Length[\[Tau]]==64,Module[{cubeIndices},
@@ -75,50 +68,31 @@ If[Count[#,0]==1,{RGBColor["#004C99"],Cube[#]},
 If[Count[#,0]==0,{RGBColor["#99FF33"],Cube[#]}]]]]&/@cubeIndices,{Thickness[0.012],Line[{{{-0.5,-0.5,-0.5},{-0.5,-0.5,3.5}},{{-0.5,-0.5,-0.5},{-0.5,3.5,-0.5}},{{-0.5,-0.5,-0.5},{3.5,-0.5,-0.5}},{{3.5,-0.5,-0.5},{3.5,-0.5,3.5}},{{-0.5,-0.5,3.5},{3.5,-0.5,3.5}},{{-0.5,3.5,-0.5},{3.5,3.5,-0.5}},{{3.5,3.5,-0.5},{3.5,3.5,3.5}},{{3.5,3.5,3.5},{-0.5,3.5,3.5}},{{-0.5,3.5,3.5},{-0.5,3.5,-0.5}},{{-0.5,3.5,3.5},{-0.5,-0.5,3.5}},{{3.5,3.5,3.5},{3.5,-0.5,3.5}},{{3.5,3.5,-0.5},{3.5,-0.5,-0.5}}}]}},Axes->False,AxesLabel->{"x","y","z"},LabelStyle->Directive[Bold,Medium,Black],PlotRange->{{-0.5,3.5},{-0.5,3.5},{-0.5,3.5}},AxesOrigin->{0.5,0.5,0.5},AxesStyle->Thickness[0.005],ImageSize->Small,ImagePadding->45]
 ]]
 
-(*PositivityTest*)
-PositivityTest[A_]:=Min[Eigenvalues[A]]>=0
+(*TausOfPCEQuantumChannels*)
+TausOfPCEQuantumChannels[n_]:=MemoryConstrained[
+Flatten[Table[If[PositivityTest[Reshuffle[PCESuperoperator[#]]]==True,#,Nothing]&/@PCEsTauConfigurations[n,i],{i,1,4^n}],1],2000000000,"Maximum usage of memory allowed exceeded. Try using PCEQuantumChannelsTaus[\!\(\*
+StyleBox[\"n\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\",\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\"k\",\nFontSlant->\"Italic\"]\)] or PCEQuantumChannelsTaus[\!\(\*
+StyleBox[\"n\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\",\",\nFontSlant->\"Italic\"]\)kmin\!\(\*
+StyleBox[\",\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\"kmax\",\nFontSlant->\"Italic\"]\)]."]
 
-(*Dirac*)
-Dirac[vector_List]:=(vector[[#]]Ket[IntegerString[(#-1),2,Log[2,Length[vector]]]])&/@Delete[Range[Length[vector]],Position[vector,0]]//Total
+TausOfPCEQuantumChannels[n_,k_]:=MemoryConstrained[
+If[PositivityTest[Reshuffle[PCESuperoperator[#]]]==True,#,Nothing]&/@PCEsTauConfigurations[n,k],2000000000,"Maximum usage of memory allowed exceeded."]
 
-(*Erase*)
-Erase[EigInfo_,PCEfrom_,invariantComponents_]:=Module[{dimPCE},
-dimPCE=Length[Dimensions[PCEfrom][[2;;]]];
-If[Count[#//Flatten,1]==invariantComponents,#,Nothing]&/@
-DeleteDuplicates[
-Flatten[
-Table[
-DeleteDuplicates[ReplacePart[PCEfrom[[i]]+#-ConstantArray[1,ConstantArray[4,dimPCE]],#->0&/@Position[PCEfrom[[i]]+#-ConstantArray[1,ConstantArray[4,dimPCE]],-1]]&/@EigInfo]
-,{i,Length[PCEfrom]}]
-,1]
-]
-]
+TausOfPCEQuantumChannels[n_,kmin_,kmax_]:=MemoryConstrained[
+Flatten[Table[If[PositivityTest[Reshuffle[PCESuperoperator[#]]]==True,#,Nothing]&/@PCEsTauConfigurations[n,i],{i,kmin,kmax}],1],2000000000,"Maximum usage of memory allowed exceeded. Try using PCEQuantumChannelsTaus[\!\(\*
+StyleBox[\"n\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\",\",\nFontSlant->\"Italic\"]\)\!\(\*
+StyleBox[\"k\",\nFontSlant->\"Italic\"]\)]."]
 
-(*BlochSphTransformation*)
-BlochSphTransformation[coord_]:=Module[{x0,y0,z0,a,b,c},
-{x0,y0,z0}=coord[[1]];
-{a,b,c}=If[#==0,0.02,#]&/@coord[[2]];
-Style[Show[ContourPlot3D[x^2+y^2+z^2==1,{x,-1,1},{y,-1,1},{z,-1,1},
-ContourStyle->{Yellow,Opacity[0.25]},Mesh->None],
-ContourPlot3D[(x-x0)^2/a^2+(y-y0)^2/b^2+(z-z0)^2/c^2==1,{x,-1,1},{y,-1,1},{z,-1,1},
-ContourStyle->{Dashed,Pink,Opacity[0.65]},Mesh->None],
-Graphics3D[{
-        Black, Arrow[Tube[{{0,0,0},1.3*Normalize[{1,0,0}]}],0.05],
-        Black,Arrow[Tube[{{0,0,0},1.3*Normalize[{0,1,0}]}],0.05],
-        Black,Arrow[Tube[{{0,0,0},1.3*Normalize[{0,0,1}]}],0.05],
-Text["x",{1.3,0,0}],Text["y",{0,1.3,0}],Text["z",{0,0,1.3}] },
-Boxed->False],Boxed->False,Axes->False,PlotRange->1.3],
-RenderingOptions->{"3DRenderingMethod"->"HardwareDepthPeeling"}]
-]
+(*NumberOfPCEOperations*)
+NumberOfPCEOperations[n_]:=2^(4^n-1)
 
-(*TensorPower*)
-TensorPower[A_, n_] := Nest[KroneckerProduct[A, #] &, A, n - 1]
+NumberOfPCEOperations[n_,k_]:=Binomial[4^n-1,k-1]
 
-(*PCEgenerators*)
-PCEgenerators[n_]:=Module[{a},
-a={{1,1,1,1},{1,1,-1,-1},{1,-1,1,-1},{1,-1,-1,1}};
-DiagonalMatrix[#]&/@ReplacePart[TensorPower[a,n],Position[TensorPower[a,n],-1]->0][[2;;]]
-]
 End[];
 EndPackage[]
 
