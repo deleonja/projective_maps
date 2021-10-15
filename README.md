@@ -38,7 +38,7 @@ PCE de 2 y 3 qubits.
 __*Archivos*__:
 * pce.m: Paquete de Mathematica con rutinas relacionadas a las operaciones PCE y
   canales cuánticos.
-* tesis.nb: Cuaderno de Mathematica en el que mostramos cómo utilizar las
+* pce_operations.nb: Cuaderno de Mathematica en el que mostramos cómo utilizar las
   rutinas de pce.m y otras para calcular canales PCE. Adicionalmente, 
   mostramos la manera en la que reproducimos nuestros resultados 
   sobre los canales PCE de 2 y 3 qubits. 
